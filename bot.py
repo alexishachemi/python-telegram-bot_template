@@ -1,51 +1,34 @@
-import telegram
-from telegram.ext import *
+from telegram import Update, error
+from telegram.ext import CallbackContext, Updater, CommandHandler, JobQueue
 import threading
-import os
 
-os.chdir(os.path.split(os.path.abspath(__file__))[0])
+with open('token.txt','r') as f:
+    TOKEN = f.read()
 
-with open('keys.txt','r') as keys_file:
-    keys = [key.split('\n')[0] for key in keys_file.readlines()]
-
-token = keys[0]
-
-try:
-    chat_id = int(keys[1])
-except:
-    print('invalid chat id.')
-    exit()
-
-try:   
-    updater = Updater(token=token, use_context=True)
-except telegram.error.InvalidToken:
-    print('Invalid token.')
-    exit()
-
+updater = Updater(TOKEN)
 dp = updater.dispatcher
 
-############################################
-############################################
-
-def start_command(update, context):
+def start_command(update: Update, context: CallbackContext):
         update.message.reply_text('Started.')
 
-def update(context):
+
+def job_update(context: CallbackContext):
     pass
 
-############################################
-############################################
 
 def shutdown():
     updater.stop()
     updater.is_idle = False
 
-def stop_command(update, context):
+
+def stop_command(update: Update, context: CallbackContext):
     update.message.reply_text('Stopping.')
     threading.Thread(target=shutdown).start()
 
-def error(update, context):
+
+def error(update: Update, context: CallbackContext):
     print(f'Update {update}\n###CAUSED ERROR###\n{context.error}')
+
 
 def main():
     dp.add_error_handler(error)
@@ -54,7 +37,7 @@ def main():
 
     job_queue = JobQueue()
     job_queue.set_dispatcher(dp)
-    job_queue.run_repeating(callback=update, interval=60)
+    job_queue.run_repeating(callback=job_update, interval=60)
 
     print('Bot started')
     updater.start_polling()
