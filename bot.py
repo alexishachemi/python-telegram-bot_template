@@ -27,7 +27,7 @@ def stop_command(update: Update, context: CallbackContext):
 
 
 def error(update: Update, context: CallbackContext):
-    print(f'Update {update}\n###CAUSED ERROR###\n{context.error}')
+    print(f'Update\n{update}\ncaused error\n{context.error}')
 
 
 def main():
