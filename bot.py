@@ -1,4 +1,4 @@
-from telegram import Update, error
+from telegram import Update
 from telegram.ext import CallbackContext, Updater, CommandHandler, JobQueue
 import threading
 
